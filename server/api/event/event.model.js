@@ -13,6 +13,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var EventSchema = new _mongoose2.default.Schema({
   name: String,
   info: String,
+  startTime: Date,
+  endTime: Date,
+  awards: String,
+  faq: String,
+  rules: String,
+  attachment: String,
   active: Boolean
 });
 
