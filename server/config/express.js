@@ -53,7 +53,7 @@ exports.default = function (app) {
   if (env !== 'test' && !process.env.SAUCE_USERNAME) {
     app.use((0, _lusca2.default)({
       csrf: {
-        angular: true
+        angular: false
       },
       xframe: 'SAMEORIGIN',
       hsts: {
