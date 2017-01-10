@@ -13,7 +13,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var EventCategorySchema = new _mongoose2.default.Schema({
   name: String,
   info: String,
-  events: [{ event: { type: Schema.Types.ObjectId, ref: 'Event' } }],
+  events: [{ event: { type: _mongoose.Schema.Types.ObjectId, ref: 'Event' } }],
   active: Boolean
 });
 
