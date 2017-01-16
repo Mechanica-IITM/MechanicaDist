@@ -7,6 +7,7 @@ var router = express.Router();
 
 router.get('/', controller.index);
 router.get('/:id', controller.show);
+router.get('/display/leaderboard/', controller.leaderboard);
 router.post('/:i', controller.create);
 router.put('/:id', controller.upsert);
 router.patch('/:id', controller.patch);

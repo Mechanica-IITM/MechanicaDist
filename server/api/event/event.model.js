@@ -15,6 +15,7 @@ var EventSchema = new _mongoose2.default.Schema({
   info: String,
   startTime: Date,
   endTime: Date,
+  date: Date,
   awards: String,
   faq: String,
   rules: String,

@@ -67,15 +67,24 @@ function index(req, res) {
  * Creates a new user
  */
 function create(req, res) {
-  var newUser = new _user2.default(req.body);
-  newUser.provider = 'local';
-  newUser.role = 'user';
-  newUser.save().then(function (user) {
-    var token = _jsonwebtoken2.default.sign({ _id: user._id }, _environment2.default.secrets.session, {
-      expiresIn: 60 * 60 * 5
-    });
-    res.json({ token: token });
-  }).catch(validationError(res));
+
+  if (req.body.rollNumber) var rollNumber = req.body.rollNumber.split(' ');
+  rollNumber = rollNumber.join('').toLowerCase();
+  _house2.default.findOne({ team: { $elemMatch: req.body.rollNumber } }).exec().then(function (house) {
+
+    var newUser = new _user2.default(req.body);
+
+    if (house.length) newUser.house = house._id;
+
+    newUser.provider = 'local';
+    newUser.role = 'user';
+    newUser.save().then(function (user) {
+      var token = _jsonwebtoken2.default.sign({ _id: user._id }, _environment2.default.secrets.session, {
+        expiresIn: 60 * 60 * 5
+      });
+      res.json({ token: token });
+    }).catch(validationError(res));
+  });
 }
 
 /**
@@ -130,7 +139,7 @@ function changePassword(req, res) {
 function me(req, res, next) {
   var userId = req.user._id;
 
-  return _user2.default.findOne({ _id: userId }, '-salt -password').exec().then(function (user) {
+  return _user2.default.findOne({ _id: userId }, '-salt -password').populate('house').exec().then(function (user) {
     // don't ever give out the password or salt
     if (!user) {
       return res.status(401).end();

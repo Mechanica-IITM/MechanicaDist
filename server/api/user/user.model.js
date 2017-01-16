@@ -50,7 +50,7 @@ var UserSchema = new _mongoose.Schema({
   rollNumber: { type: String, uppercase: true },
   phoneNumber: { type: String },
   // meaEvents: [{meaEvent:{type:Schema.Types.ObjectId,ref:'MeaEvent'},score:Number}],
-  house: String,
+  house: { type: _mongoose.Schema.Types.ObjectId, ref: 'House' },
   provider: String,
   salt: String,
   facebook: {},

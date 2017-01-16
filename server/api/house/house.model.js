@@ -13,8 +13,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var Schema = _mongoose2.default.Schema;
 var HouseSchema = new _mongoose2.default.Schema({
   name: String,
-  team: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-  commander: { type: Schema.Types.ObjectId, ref: 'User' },
+  team: [String],
+  commander: String,
+  commanderPh: String,
+  totalScore: { type: Number, default: 0 },
   meaEvents: [{ user: { type: Schema.Types.ObjectId, ref: 'User' }, meaEvent: { type: Schema.Types.ObjectId, ref: 'MeaEvent' }, score: { type: Number, default: 0 } }]
 });
 
