@@ -14,6 +14,7 @@ module.exports = {
 
   GOOGLE_ID: 'app-id',
   GOOGLE_SECRET: 'secret',
+  MONGODB_ADDON_URI: 'mongodb://ujwya9grzs9jp5t:5uiZZ97lP8503WP0L29C@bysmh4wewm9h6qg-mongodb.services.clever-cloud.com:27017/bysmh4wewm9h6qg',
 
   // Control debug level for modules using visionmedia/debug
   DEBUG: ''
