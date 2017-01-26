@@ -22,6 +22,8 @@ exports.index = index;
 exports.show = show;
 exports.create = create;
 exports.upsert = upsert;
+exports.update = update;
+exports.register = register;
 exports.patch = patch;
 exports.destroy = destroy;
 
@@ -32,6 +34,10 @@ var _fastJsonPatch2 = _interopRequireDefault(_fastJsonPatch);
 var _event = require('./event.model');
 
 var _event2 = _interopRequireDefault(_event);
+
+var _eventCategory = require('../eventCategory/eventCategory.model');
+
+var _eventCategory2 = _interopRequireDefault(_eventCategory);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -91,12 +97,26 @@ function index(req, res) {
 
 // Gets a single Event from the DB
 function show(req, res) {
-  return _event2.default.findById(req.params.id).exec().then(handleEntityNotFound(res)).then(respondWithResult(res)).catch(handleError(res));
+  return _event2.default.findById(req.params.id).exec().then(handleEntityNotFound(res)).then(function (event) {
+    var isRegistered = false;
+    isRegistered = event.registered.find(function (user) {
+      if (user.user.equals(req.user._id)) return true;
+      return false;
+    });
+    return res.json({ event: event, isRegistered: isRegistered });
+  }).catch(handleError(res));
 }
 
 // Creates a new Event in the DB
 function create(req, res) {
-  return _event2.default.create(req.body).then(respondWithResult(res, 201)).catch(handleError(res));
+  console.log(req.body);
+  return _event2.default.create(req.body).then(function (event) {
+    _eventCategory2.default.findById(event.eventCategory).exec().then(handleEntityNotFound(res)).then(function (eventCategory) {
+      console.log(eventCategory);
+      eventCategory.events.push({ event: event._id });
+      eventCategory.save().then(respondWithResult(res, 201)).catch(handleError(res));
+    }).catch(handleError(res));
+  }).catch(handleError(res));
 }
 
 // Upserts the given Event in the DB at the specified ID
@@ -104,9 +124,35 @@ function upsert(req, res) {
   if (req.body._id) {
     delete req.body._id;
   }
-  return _event2.default.findOneAndUpdate(req.params.id, req.body, { upsert: true, setDefaultsOnInsert: true, runValidators: true }).exec().then(respondWithResult(res)).catch(handleError(res));
+  console.log(req.body);
+  return _event2.default.findOneAndUpdate(req.params.id, req.body, { upsert: true, new: true, setDefaultsOnInsert: true, runValidators: true }).exec().then(respondWithResult(res)).catch(handleError(res));
 }
 
+function update(req, res) {
+  if (req.body._id) {
+    delete req.body._id;
+  }
+  return _event2.default.findById(req.params.id).exec().then(handleEntityNotFound(res)).then(function (event) {
+    event.name = req.body.name;
+    event.info = req.body.info;
+    event.faq = req.body.faq;
+    event.rules = req.body.rules;
+    event.awards = req.body.awards;
+    event.date = new Date(req.body.date);
+    event.startTime = new Date(req.body.startTime);
+    event.endTime = new Date(req.body.endTime);
+    event.venue = req.body.venue;
+    event.poster = req.body.poster;
+    event.save().then(respondWithResult(res)).catch(handleError(res));
+  }).catch(handleError(res));
+}
+
+function register(req, res) {
+  return _event2.default.findById(req.params.id).exec().then(function (event) {
+    event.registered.push({ user: req.user._id });
+    event.save().then(respondWithResult(res)).catch(handleError(res));
+  }).catch(handleError(res));
+}
 // Updates an existing Event in the DB
 function patch(req, res) {
   if (req.body._id) {

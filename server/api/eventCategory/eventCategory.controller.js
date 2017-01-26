@@ -86,7 +86,7 @@ function handleError(res, statusCode) {
 
 // Gets a list of EventCategorys
 function index(req, res) {
-  return _eventCategory2.default.find().exec().then(respondWithResult(res)).catch(handleError(res));
+  return _eventCategory2.default.find().populate('events.event').exec().then(respondWithResult(res)).catch(handleError(res));
 }
 
 // Gets a single EventCategory from the DB

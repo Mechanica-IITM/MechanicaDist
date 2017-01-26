@@ -19,8 +19,12 @@ var EventSchema = new _mongoose2.default.Schema({
   awards: String,
   faq: String,
   rules: String,
+  venue: String,
   attachment: String,
-  active: Boolean
+  poster: String,
+  active: Boolean,
+  eventCategory: { type: _mongoose2.default.Schema.Types.ObjectId, ref: 'EventCategory' },
+  registered: [{ user: { type: _mongoose2.default.Schema.Types.ObjectId, ref: 'User' } }]
 });
 
 exports.default = _mongoose2.default.model('Event', EventSchema);

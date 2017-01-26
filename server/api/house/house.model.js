@@ -13,7 +13,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var Schema = _mongoose2.default.Schema;
 var HouseSchema = new _mongoose2.default.Schema({
   name: String,
-  team: [String],
+  team: [{ member: String }],
   commander: String,
   commanderPh: String,
   totalScore: { type: Number, default: 0 },
