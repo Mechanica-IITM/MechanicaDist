@@ -18,8 +18,8 @@ router.post('/', auth.hasRole('admin'), controller.create);
 // router.put('/:id', auth.hasRole('admin'), controller.upsert);
 router.put('/:id', auth.hasRole('admin'), controller.update);
 router.put('/register/:id', auth.isAuthenticated(), controller.register);
-router.patch('/:id', controller.patch);
-router.delete('/:id', controller.destroy);
+// router.patch('/:id', controller.patch);
+router.delete('/:id', auth.hasRole('admin'), controller.destroy);
 
 module.exports = router;
 //# sourceMappingURL=index.js.map

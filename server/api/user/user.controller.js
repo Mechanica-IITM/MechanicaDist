@@ -5,6 +5,8 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.index = index;
 exports.create = create;
+exports.setHighScore = setHighScore;
+exports.getHighScore = getHighScore;
 exports.show = show;
 exports.destroy = destroy;
 exports.changePassword = changePassword;
@@ -91,6 +93,14 @@ function create(req, res) {
   } else return res.send(400);
 }
 
+function setHighScore(req, res, next) {
+  if (req.user.highscore < req.body.score) req.user.highscore = req.body.score;
+  req.user.save().then(respondWithResult(res)).catch(handleError(res));
+}
+
+function getHighScore(req, res, next) {
+  _user2.default.find({}, 'name highscore college').sort({ highscore: -1 }).limit(3).then(respondWithResult(res)).catch(handleError(res));
+}
 /**
  * Get a single user
  */
