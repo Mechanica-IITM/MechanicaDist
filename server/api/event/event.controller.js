@@ -20,6 +20,7 @@ var _promise2 = _interopRequireDefault(_promise);
 
 exports.index = index;
 exports.show = show;
+exports.isRegistered = isRegistered;
 exports.create = create;
 exports.upsert = upsert;
 exports.update = update;
@@ -86,6 +87,7 @@ function handleEntityNotFound(res) {
 function handleError(res, statusCode) {
   statusCode = statusCode || 500;
   return function (err) {
+    console.log(err);
     res.status(statusCode).send(err);
   };
 }
@@ -97,13 +99,19 @@ function index(req, res) {
 
 // Gets a single Event from the DB
 function show(req, res) {
+  console.log(req.params.id);
+  return _event2.default.findById(req.params.id).exec().then(handleEntityNotFound(res)).then(respondWithResult(res)).catch(handleError(res));
+}
+
+// Gets a single Event from the DB
+function isRegistered(req, res) {
   return _event2.default.findById(req.params.id).exec().then(handleEntityNotFound(res)).then(function (event) {
     var isRegistered = false;
     isRegistered = event.registered.find(function (user) {
       if (user.user.equals(req.user._id)) return true;
       return false;
     });
-    return res.json({ event: event, isRegistered: isRegistered });
+    return res.json(isRegistered);
   }).catch(handleError(res));
 }
 

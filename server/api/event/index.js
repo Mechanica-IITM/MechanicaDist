@@ -14,6 +14,8 @@ var router = express.Router();
 
 router.get('/', controller.index);
 router.get('/:id', controller.show);
+
+router.get('/isRegistered/:id', auth.isAuthenticated(), controller.isRegistered);
 router.post('/', auth.hasRole('admin'), controller.create);
 // router.put('/:id', auth.hasRole('admin'), controller.upsert);
 router.put('/:id', auth.hasRole('admin'), controller.update);
