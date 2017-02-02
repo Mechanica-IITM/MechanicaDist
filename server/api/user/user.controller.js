@@ -7,6 +7,7 @@ exports.index = index;
 exports.create = create;
 exports.setHighScore = setHighScore;
 exports.getHighScore = getHighScore;
+exports.setScoreZero = setScoreZero;
 exports.contacts = contacts;
 exports.show = show;
 exports.destroy = destroy;
@@ -102,6 +103,11 @@ function setHighScore(req, res, next) {
 
 function getHighScore(req, res, next) {
   _user2.default.find({}, 'name highscore college').sort({ highscore: -1 }).limit(3).then(respondWithResult(res)).catch(handleError(res));
+}
+
+function setScoreZero(req, res, next) {
+  console.log('here');
+  _user2.default.update({}, { $set: { highscore: 0 } }, { multi: true }).then(respondWithResult(res)).catch(handleError(res));
 }
 
 function contacts(req, res) {
