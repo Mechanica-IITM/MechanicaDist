@@ -95,6 +95,7 @@ function create(req, res) {
 }
 
 function setHighScore(req, res, next) {
+  console.log(req.body.score);
   if (req.user.highscore < req.body.score) req.user.highscore = req.body.score;
   req.user.save().then(respondWithResult(res)).catch(handleError(res));
 }
