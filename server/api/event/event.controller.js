@@ -32,6 +32,10 @@ var _fastJsonPatch = require('fast-json-patch');
 
 var _fastJsonPatch2 = _interopRequireDefault(_fastJsonPatch);
 
+var _validator = require('validator');
+
+var _validator2 = _interopRequireDefault(_validator);
+
 var _event = require('./event.model');
 
 var _event2 = _interopRequireDefault(_event);
@@ -100,11 +104,17 @@ function index(req, res) {
 // Gets a single Event from the DB
 function show(req, res) {
   console.log(req.params.id);
+
+  if (!_validator2.default.isMongoId(req.params.id + '')) return res.status(400).send("Invalid Id");
+
   return _event2.default.findById(req.params.id).exec().then(handleEntityNotFound(res)).then(respondWithResult(res)).catch(handleError(res));
 }
 
 // Gets a single Event from the DB
 function isRegistered(req, res) {
+
+  if (!_validator2.default.isMongoId(req.params.id + '')) return res.status(400).send("Invalid Id");
+
   return _event2.default.findById(req.params.id).exec().then(handleEntityNotFound(res)).then(function (event) {
     var isRegistered = false;
     isRegistered = event.registered.find(function (user) {
@@ -140,6 +150,8 @@ function update(req, res) {
   if (req.body._id) {
     delete req.body._id;
   }
+  if (!_validator2.default.isMongoId(req.params.id + '')) return res.status(400).send("Invalid Id");
+
   return _event2.default.findById(req.params.id).exec().then(handleEntityNotFound(res)).then(function (event) {
     event.name = req.body.name;
     event.info = req.body.info;
@@ -156,6 +168,8 @@ function update(req, res) {
 }
 
 function register(req, res) {
+  if (!_validator2.default.isMongoId(req.params.id + '')) return res.status(400).send("Invalid Id");
+
   return _event2.default.findById(req.params.id).exec().then(function (event) {
     event.registered.push({ user: req.user._id });
     event.save().then(respondWithResult(res)).catch(handleError(res));

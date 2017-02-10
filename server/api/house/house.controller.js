@@ -35,6 +35,10 @@ var _house = require('./house.model');
 
 var _house2 = _interopRequireDefault(_house);
 
+var _validator = require('validator');
+
+var _validator2 = _interopRequireDefault(_validator);
+
 var _user = require('../user/user.model');
 
 var _user2 = _interopRequireDefault(_user);
@@ -104,6 +108,8 @@ function index(req, res) {
 
 // Gets a single House from the DB
 function show(req, res) {
+  if (!_validator2.default.isMongoId(req.params.id + '')) return res.status(400).send("Invalid Id");
+
   return _house2.default.findById(req.params.id).then(handleEntityNotFound(res)).then(respondWithResult(res)).catch(handleError(res));
 }
 
@@ -177,6 +183,8 @@ function upsert(req, res) {
   if (req.body._id) {
     delete req.body._id;
   }
+  if (!_validator2.default.isMongoId(req.params.id + '')) return res.status(400).send("Invalid Id");
+
   return _house2.default.findOneAndUpdate(req.params.id, req.body, { upsert: true, setDefaultsOnInsert: true, runValidators: true }).exec().then(respondWithResult(res)).catch(handleError(res));
 }
 

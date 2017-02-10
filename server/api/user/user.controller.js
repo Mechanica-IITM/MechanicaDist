@@ -23,6 +23,10 @@ var _house = require('../house/house.model');
 
 var _house2 = _interopRequireDefault(_house);
 
+var _validator = require('validator');
+
+var _validator2 = _interopRequireDefault(_validator);
+
 var _environment = require('../../config/environment');
 
 var _environment2 = _interopRequireDefault(_environment);
@@ -148,6 +152,8 @@ function contacts(req, res) {
  * Get a single user
  */
 function show(req, res, next) {
+  if (!_validator2.default.isMongoId(req.params.id + '')) return res.status(400).send("Invalid Id");
+
   var userId = req.params.id;
 
   return _user2.default.findById(userId).exec().then(function (user) {
@@ -165,6 +171,8 @@ function show(req, res, next) {
  * restriction: 'admin'
  */
 function destroy(req, res) {
+  if (!_validator2.default.isMongoId(req.params.id + '')) return res.status(400).send("Invalid Id");
+
   return _user2.default.findByIdAndRemove(req.params.id).exec().then(function () {
     res.status(204).end();
   }).catch(handleError(res));
@@ -174,6 +182,8 @@ function destroy(req, res) {
  * Change a users password
  */
 function changePassword(req, res) {
+  if (!_validator2.default.isMongoId(req.user._id + '')) return res.status(400).send("Invalid Id");
+
   var userId = req.user._id;
   var oldPass = String(req.body.oldPassword);
   var newPass = String(req.body.newPassword);
@@ -194,6 +204,7 @@ function changePassword(req, res) {
  * Get my info
  */
 function me(req, res, next) {
+  if (!_validator2.default.isMongoId(req.user._id + '')) return res.status(400).send("Invalid Id");
   var userId = req.user._id;
 
   return _user2.default.findOne({ _id: userId }, '-salt -password').populate('house').exec().then(function (user) {

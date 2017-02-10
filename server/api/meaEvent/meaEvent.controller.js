@@ -34,6 +34,10 @@ var _meaEvent = require('./meaEvent.model');
 
 var _meaEvent2 = _interopRequireDefault(_meaEvent);
 
+var _validator = require('validator');
+
+var _validator2 = _interopRequireDefault(_validator);
+
 var _house = require('../house/house.model');
 
 var _house2 = _interopRequireDefault(_house);
@@ -100,6 +104,8 @@ function index(req, res) {
 
 // Gets a single MeaEvent from the DB
 function show(req, res) {
+  if (!_validator2.default.isMongoId(req.params.id + '')) return res.status(400).send("Invalid Id");
+
   return _meaEvent2.default.findById(req.params.id).exec().then(handleEntityNotFound(res)).then(respondWithResult(res)).catch(handleError(res));
 }
 
@@ -130,6 +136,7 @@ function patch(req, res) {
 
 function register(req, res) {
 
+  if (!_validator2.default.isMongoId(req.params.eventId + '')) return res.status(400).send("Invalid Id");
   // Add user to event
   return _meaEvent2.default.findOneAndUpdate({ _id: req.params.eventId }, { $push: { users: { user: req.user._id, score: 0 } } }, { upsert: true, setDefaultsOnInsert: true }).exec().then(function (event) {
 

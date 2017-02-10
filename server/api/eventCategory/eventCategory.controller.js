@@ -22,12 +22,17 @@ exports.index = index;
 exports.show = show;
 exports.create = create;
 exports.upsert = upsert;
+exports.update = update;
 exports.patch = patch;
 exports.destroy = destroy;
 
 var _fastJsonPatch = require('fast-json-patch');
 
 var _fastJsonPatch2 = _interopRequireDefault(_fastJsonPatch);
+
+var _validator = require('validator');
+
+var _validator2 = _interopRequireDefault(_validator);
 
 var _eventCategory = require('./eventCategory.model');
 
@@ -91,6 +96,8 @@ function index(req, res) {
 
 // Gets a single EventCategory from the DB
 function show(req, res) {
+  if (!_validator2.default.isMongoId(req.params.id + '')) return res.status(400).send("Invalid Id");
+
   return _eventCategory2.default.findById(req.params.id).exec().then(handleEntityNotFound(res)).then(respondWithResult(res)).catch(handleError(res));
 }
 
@@ -105,6 +112,19 @@ function upsert(req, res) {
     delete req.body._id;
   }
   return _eventCategory2.default.findOneAndUpdate(req.params.id, req.body, { upsert: true, setDefaultsOnInsert: true, runValidators: true }).exec().then(respondWithResult(res)).catch(handleError(res));
+}
+function update(req, res) {
+  if (req.body._id) {
+    delete req.body._id;
+  }
+  if (!_validator2.default.isMongoId(req.params.id + '')) return res.status(400).send("Invalid Id");
+
+  return _eventCategory2.default.findById(req.params.id).exec().then(handleEntityNotFound(res)).then(function (eventCategory) {
+    eventCategory.name = req.body.name;
+    eventCategory.info = req.body.info;
+    eventCategory.imgURL = req.body.imgURL;
+    eventCategory.save().then(respondWithResult(res)).catch(handleError(res));
+  }).catch(handleError(res));
 }
 
 // Updates an existing EventCategory in the DB

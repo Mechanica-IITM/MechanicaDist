@@ -14,7 +14,6 @@ exports.default = function (app) {
   app.use('/api/eventCategorys', require('./api/eventCategory'));
   app.use('/api/houses', require('./api/house'));
   app.use('/api/meaEvents', require('./api/meaEvent'));
-  app.use('/api/things', require('./api/thing'));
   app.use('/api/users', require('./api/user'));
 
   app.use('/auth', require('./auth').default);
