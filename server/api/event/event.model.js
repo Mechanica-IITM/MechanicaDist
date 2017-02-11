@@ -22,6 +22,7 @@ var EventSchema = new _mongoose2.default.Schema({
   venue: { type: String, default: '' },
   poster: { type: String, default: '' },
   problemStatement: { type: String, default: '' },
+  paylink: { type: String, default: '' },
   contact: { type: String, default: '' },
   active: Boolean,
   eventCategory: { type: _mongoose2.default.Schema.Types.ObjectId, ref: 'EventCategory' },
