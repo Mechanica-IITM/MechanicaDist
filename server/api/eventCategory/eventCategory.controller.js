@@ -96,9 +96,7 @@ function index(req, res) {
 
 // Gets a single EventCategory from the DB
 function show(req, res) {
-  if (!_validator2.default.isMongoId(req.params.id + '')) return res.status(400).send("Invalid Id");
-
-  return _eventCategory2.default.findById(req.params.id).exec().then(handleEntityNotFound(res)).then(respondWithResult(res)).catch(handleError(res));
+  return _eventCategory2.default.findOne({ "name": req.params.name }).populate('events.event').exec().then(handleEntityNotFound(res)).then(respondWithResult(res)).catch(handleError(res));
 }
 
 // Creates a new EventCategory in the DB
