@@ -22,6 +22,8 @@ exports.index = index;
 exports.show = show;
 exports.isRegistered = isRegistered;
 exports.create = create;
+exports.getRegisteredUsers = getRegisteredUsers;
+exports.convertToExcel = convertToExcel;
 exports.upsert = upsert;
 exports.update = update;
 exports.register = register;
@@ -36,13 +38,25 @@ var _validator = require('validator');
 
 var _validator2 = _interopRequireDefault(_validator);
 
+var _mongoXlsx = require('mongo-xlsx');
+
+var _mongoXlsx2 = _interopRequireDefault(_mongoXlsx);
+
 var _event = require('./event.model');
 
 var _event2 = _interopRequireDefault(_event);
 
+var _user = require('../user/user.model');
+
+var _user2 = _interopRequireDefault(_user);
+
 var _eventCategory = require('../eventCategory/eventCategory.model');
 
 var _eventCategory2 = _interopRequireDefault(_eventCategory);
+
+var _path = require('path');
+
+var _path2 = _interopRequireDefault(_path);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -137,6 +151,49 @@ function create(req, res) {
   }).catch(handleError(res));
 }
 
+// Gets all registered users for an Event in the DB
+function getRegisteredUsers(req, res) {
+  return _event2.default.findById(req.params.id).then(function (event) {
+    var registered = [];
+    for (var i = 0; i <= event.registered.length - 1; i++) {
+      registered.push(event.registered[i].user);
+    }
+    console.log(registered);
+    _user2.default.find({ _id: { $in: registered } }, 'name email college phoneNumber').exec().then(handleEntityNotFound(res)).then(function (users) {
+
+      return res.status(201).send(users);
+    }).catch(handleError(res));
+  }).catch(handleError(res));
+}
+// Exports list of registered users of an event
+function convertToExcel(req, res) {
+  if (!_validator2.default.isMongoId(req.params.id + '')) return res.status(400).send("Invalid Id");
+  var model = [{
+    "displayName": "Name",
+    "access": "name",
+    "type": "string"
+  }, {
+    "displayName": "Email address",
+    "access": "email",
+    "type": "string"
+  }, {
+    "displayName": "College name",
+    "access": "college",
+    "type": "string"
+  }];
+
+  return _event2.default.findById(req.params.id).exec().then(function (event) {
+    var data = req.body;
+
+    // Generate Excel 
+    _mongoXlsx2.default.mongoData2Xlsx(data, model, function (err, data) {
+      console.log('File saved at:', data.fullPath);
+
+      // return res.status(201).send(data)
+      return res.json(data.fullPath);
+    });
+  }).catch(handleError(res));
+}
 // Upserts the given Event in the DB at the specified ID
 function upsert(req, res) {
   if (req.body._id) {
@@ -174,7 +231,15 @@ function register(req, res) {
   if (!_validator2.default.isMongoId(req.params.id + '')) return res.status(400).send("Invalid Id");
 
   return _event2.default.findById(req.params.id).exec().then(function (event) {
-    event.registered.push({ user: req.user._id });
+    var isRegistered = false;
+    for (var i = 0; i < event.registered.length; ++i) {
+      if (event.registered[i].user.equals(req.user._id)) {
+        isRegistered = true;
+        console.log('already registered');
+        break;
+      }
+    }if (!isRegistered) event.registered.push({ user: req.user._id });
+
     event.save().then(respondWithResult(res)).catch(handleError(res));
   }).catch(handleError(res));
 }

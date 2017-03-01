@@ -21,8 +21,16 @@ exports.default = function (app) {
   // All undefined asset or api routes should return a 404
   app.route('/:url(api|auth|components|app|bower_components|assets)/*').get(_errors2.default[404]);
 
+  // Send excel file
+  app.route('/excel/*').get(function (req, res) {
+    global.appRoot = _path2.default.join(_path2.default.resolve(__dirname), '..');
+    var file = req.url.split('excel/')[1];
+    console.log('dfgh', file);
+    res.sendFile(_path2.default.resolve(appRoot + '/' + file));
+  });
   // All other routes should redirect to the index.html
   app.route('/*').get(function (req, res) {
+    global.appRoot = _path2.default.join(_path2.default.resolve(__dirname), '..');
     res.sendFile(_path2.default.resolve(app.get('appPath') + '/index.html'));
   });
 };

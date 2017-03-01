@@ -8,8 +8,8 @@ module.exports = {
 
   // MongoDB connection options
   mongo: {
-    uri: process.env.MONGODB_ADDON_URI
-    //'mongodb://localhost/mechanica-dev'
+    uri: //process.env.MONGODB_ADDON_URI
+    'mongodb://localhost/mechanica-dev'
   },
 
   // Seed database on startup

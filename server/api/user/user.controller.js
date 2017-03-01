@@ -9,6 +9,7 @@ exports.setHighScore = setHighScore;
 exports.getHighScore = getHighScore;
 exports.setScoreZero = setScoreZero;
 exports.contacts = contacts;
+exports.spons = spons;
 exports.show = show;
 exports.destroy = destroy;
 exports.changePassword = changePassword;
@@ -148,6 +149,11 @@ function contacts(req, res) {
 
   return res.json(contacts);
 }
+function spons(req, res) {
+  var spons = [{ title: "Title Sponsor" }, { title: "Merchandise Partner" }, { title: "Design Partner" }, { title: "Events Partner" }, { title: "Education Partner", num: [1, 2, 3] }, { title: "Knowledge Partner" }, { title: "Professional Training Partner" }, { title: "Workshop Partner" }, { title: "Travel Partner" }, { title: "Student Opportunity Partner" }, { title: "Entertainment Partner" }, { title: "Ticketing Partner" }, { title: "Online Media Partner", num: [1, 2] }, { title: "Finance Partner" }];
+  return res.json(spons);
+}
+
 /**
  * Get a single user
  */
@@ -160,7 +166,7 @@ function show(req, res, next) {
     if (!user) {
       return res.status(404).end();
     }
-    res.json(user.profile);
+    res.json(user.profileDetails);
   }).catch(function (err) {
     return next(err);
   });
