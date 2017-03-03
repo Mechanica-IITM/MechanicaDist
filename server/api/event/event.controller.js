@@ -155,12 +155,11 @@ function create(req, res) {
 function getRegisteredUsers(req, res) {
   return _event2.default.findById(req.params.id).then(function (event) {
     var registered = [];
-    for (var i = 0; i <= event.registered.length - 1; i++) {
-      registered.push(event.registered[i].user);
-    }
-    console.log(registered);
-    _user2.default.find({ _id: { $in: registered } }, 'name email college phoneNumber').exec().then(handleEntityNotFound(res)).then(function (users) {
 
+    for (var i = 0; i < event.registered.length; ++i) {
+      registered.push(event.registered[i].user + '');
+    }_user2.default.find({ _id: { $in: registered } }, 'name email college phoneNumber').exec().then(handleEntityNotFound(res)).then(function (users) {
+      console.log(users.length, 55555555);
       return res.status(201).send(users);
     }).catch(handleError(res));
   }).catch(handleError(res));
